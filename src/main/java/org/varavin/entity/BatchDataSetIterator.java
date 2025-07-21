@@ -8,9 +8,8 @@ import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.varavin.Config;
-import org.varavin.DataManager;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -23,6 +22,7 @@ public class BatchDataSetIterator implements DataSetIterator {
     private final int batchSize;
     private int cursor = 0;
     private final int totalExamples;
+    private final List<String> labelNames = Arrays.asList("UP", "DOWN", "SIDEWAYS");
 
     public BatchDataSetIterator(INDArray features, INDArray labels, int batchSize) {
         this.features = features;
@@ -51,19 +51,21 @@ public class BatchDataSetIterator implements DataSetIterator {
 
         cursor += actualBatchSize;
 
-        // DL4J for RNN expects format [minibatch, features, timesteps]
-        // We prepare data as [minibatch, timesteps, features], so we permute here.
+        // --- ИЗМЕНЕНИЕ: Для CNN1D данные должны быть в формате [batch, features, timesteps] ---
+        // Наш DataManager уже создает данные в формате [NUM_FEATURES, TIME_STEPS] для каждого примера,
+        // поэтому при батчинге мы получаем [batch, NUM_FEATURES, TIME_STEPS], что является правильным форматом.
+        // Никаких дополнительных перестановок (permute) не требуется.
         return new DataSet(batchFeatures, batchLabels);
     }
 
     @Override
     public int inputColumns() {
-        return Config.NUM_FEATURES;
+        // Для CNN это ширина (timesteps)
+        return Config.TIME_STEPS;
     }
 
     @Override
     public int totalOutcomes() {
-        // For regression, this is the number of output variables
         return Config.NUM_OUTPUTS;
     }
 
@@ -99,8 +101,7 @@ public class BatchDataSetIterator implements DataSetIterator {
 
     @Override
     public List<String> getLabels() {
-        // Not applicable for regression
-        return Collections.emptyList();
+        return labelNames;
     }
 
     @Override

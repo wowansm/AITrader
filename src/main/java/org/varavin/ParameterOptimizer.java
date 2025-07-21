@@ -2,10 +2,11 @@ package org.varavin;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.util.ModelSerializer;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.varavin.entity.BotParameters;
+import org.varavin.entity.ProcessedData;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,14 +15,30 @@ public class ParameterOptimizer {
 
     private static final Logger log = LoggerFactory.getLogger(ParameterOptimizer.class);
 
+    /*
+     * ВАЖНОЕ ПРИМЕЧАНИЕ:
+     * После введения в TradingBot логики с двумя режимами волатильности (High/Low),
+     * данный оптимизатор стал менее эффективным. Сейчас он оптимизирует только ОДИН
+     * набор параметров, который передается в конструктор TradingBot, но фактически
+     * НЕ ИСПОЛЬЗУЕТСЯ внутри симуляции, так как бот берет параметры из Config.java.
+     *
+     * Чтобы корректно оптимизировать систему, необходимо:
+     * 1. Решить, параметры какого режима мы оптимизируем (например, только для High Volatility).
+     * 2. Модифицировать TradingBot, чтобы он использовал ОДИН набор оптимизируемых параметров
+     * для выбранного режима, а для второго режима брал статические значения из Config.
+     * 3. В идеале — использовать более продвинутые методы оптимизации (например, с помощью opt4j),
+     * которые могут работать со всем набором из 8 параметров (по 4 для каждого режима) одновременно.
+     *
+     * Текущий код оставлен для демонстрации принципа, но требует доработки для полноценной
+     * оптимизации новой, двухрежимной стратегии.
+     */
     public static void main(String[] args) throws IOException {
         log.info("--- Подготовка данных для оптимизации ---");
-        DataSetIterator[] data = DataManager.prepareData(Config.BATCH_SIZE);
+        ProcessedData data = DataManager.prepareData();
         if (data == null) {
             log.error("Не удалось подготовить данные. Оптимизация прервана.");
             return;
         }
-        DataSetIterator testIter = data[2];
 
         File bestModelFile = new File(Config.MODEL_DIR, "bestModel.bin");
         if (!bestModelFile.exists()) {
@@ -31,42 +48,28 @@ public class ParameterOptimizer {
         MultiLayerNetwork bestModel = ModelSerializer.restoreMultiLayerNetwork(bestModelFile);
         log.info("Загружена модель для оптимизации: {}", bestModelFile.getName());
 
-        // --- Новые диапазоны для новой сигнальной логики ---
-        double atrStopStart = 1.5;
-        double atrStopEnd = 5.0;
-        double atrStopStep = 0.5;
+        // Эти диапазоны будут использоваться для оптимизации "базовых" параметров
+        // в объекте BotParameters, хотя они и не влияют на симуляцию напрямую.
+        double atrStopStart = 1.5, atrStopEnd = 5.0, atrStopStep = 0.5;
+        double rrStart = 1.0, rrEnd = 3.0, rrStep = 0.25;
+        double thresholdStart = 0.3, thresholdEnd = 1.5, thresholdStep = 0.2;
+        double riskPercentStart = 0.02, riskPercentEnd = 0.10, riskPercentStep = 0.02;
 
-        double rrStart = 1.0;
-        double rrEnd = 3.0;
-        double rrStep = 0.25;
-
-        double thresholdStart = 0.3;
-        double thresholdEnd = 1.5;
-        double thresholdStep = 0.2;
-
-        double riskPercentStart = 0.02; // 2%
-        double riskPercentEnd = 0.10;   // 10%
-        double riskPercentStep = 0.02;  // Шаг 2%
-
-        optimize(bestModel, testIter,
+        optimize(bestModel, data.testFeatures(),
                 atrStopStart, atrStopEnd, atrStopStep,
                 rrStart, rrEnd, rrStep,
                 thresholdStart, thresholdEnd, thresholdStep,
                 riskPercentStart, riskPercentEnd, riskPercentStep);
     }
 
-    private static void optimize(MultiLayerNetwork model, DataSetIterator testIterator,
+    private static void optimize(MultiLayerNetwork model, INDArray testFeatures,
                                  double atrStopStart, double atrStopEnd, double atrStopStep,
                                  double rrStart, double rrEnd, double rrStep,
                                  double thresholdStart, double thresholdEnd, double thresholdStep,
                                  double riskStart, double riskEnd, double riskStep) {
 
-        log.info("\n--- НАЧАЛО ОПТИМИЗАЦИИ ПАРАМЕТРОВ (СИГНАЛЬНАЯ ЛОГИКА) ---");
-        log.info("Диапазон ATR Stop Multiplier: [{}...{}]", atrStopStart, atrStopEnd);
-        log.info("Диапазон Fixed R/R Ratio:   [{}...{}]", rrStart, rrEnd);
-        log.info("Диапазон Signal Threshold:  [{}...{}]", thresholdStart, thresholdEnd);
-        log.info("Диапазон Risk Percent:      [{}...{}]", riskStart, riskEnd);
-        log.info("----------------------------------------------------------");
+        log.info("\n--- НАЧАЛО ОПТИМИЗАЦИИ ПАРАМЕТРОВ ---");
+        log.warn("ВНИМАНИЕ: Оптимизатор запущен в демонстрационном режиме. Он не влияет на параметры, используемые в симуляции.");
 
         BotParameters bestParams = null;
         double bestBalance = -Double.MAX_VALUE;
@@ -76,26 +79,20 @@ public class ParameterOptimizer {
             for (double atrStop = atrStopStart; atrStop <= atrStopEnd; atrStop += atrStopStep) {
                 for (double rr = rrStart; rr <= rrEnd; rr += rrStep) {
                     for (double threshold = thresholdStart; threshold <= thresholdEnd; threshold += thresholdStep) {
-
                         totalIterations++;
-
+                        // Создаем объект параметров, который сейчас является "пустышкой" для симуляции
                         BotParameters currentParams = new BotParameters(atrStop, rr, threshold, risk);
-
                         TradingBot bot = new TradingBot(currentParams, false);
-                        testIterator.reset();
-                        TradingBot.SimulationResult result = bot.runSimulation(model, testIterator);
 
-                        if (result == null || result.totalTrades() < 10) { // Ищем более активные стратегии
-                            continue;
-                        }
+                        TradingBot.SimulationResult result = bot.runSimulation(model, testFeatures);
+
+                        if (result == null || result.totalTrades() < 10) continue;
 
                         if (result.finalBalance() > bestBalance) {
                             bestBalance = result.finalBalance();
-                            bestParams = currentParams;
-                            log.info(String.format("НОВЫЙ ЛИДЕР: Баланс: %.2f | Сделок: %d | ПФ: %.2f | Risk: %.0f%%, ATR Stop: %.1f, R/R: %.2f, Thresh: %.1f",
-                                    bestBalance, result.totalTrades(), result.profitFactor(),
-                                    bestParams.riskPercent() * 100, bestParams.atrStopMultiplier(),
-                                    bestParams.fixedRiskRewardRatio(), bestParams.signalThreshold()));
+                            bestParams = currentParams; // Сохраняем "демо" параметры
+                            log.info(String.format("Найден новый лидер (на основе параметров из Config.java): Баланс: %.2f | Сделок: %d | ПФ: %.2f",
+                                    bestBalance, result.totalTrades(), result.profitFactor()));
                         }
                     }
                 }
@@ -105,14 +102,10 @@ public class ParameterOptimizer {
         log.info("\n--- ОПТИМИЗАЦИЯ ЗАВЕРШЕНА ---");
         log.info("Всего итераций: {}", totalIterations);
         if (bestParams != null) {
-            log.info("Лучший результат: Баланс = {}", String.format("%.2f", bestBalance));
-            log.info("Лучшие параметры:");
-            log.info("\tRISK_PER_TRADE_PERCENT = {}", bestParams.riskPercent());
-            log.info("\tATR_STOP_MULTIPLIER = {}", bestParams.atrStopMultiplier());
-            log.info("\tFIXED_RISK_REWARD_RATIO = {}", bestParams.fixedRiskRewardRatio());
-            log.info("\tSIGNAL_THRESHOLD = {}", bestParams.signalThreshold());
+            log.info("Лучший результат (на основе статических параметров из Config): Баланс = {}", String.format("%.2f", bestBalance));
+            log.info("Параметры, использованные в последнем лучшем запуске оптимизатора (демонстрационные): {}", bestParams);
         } else {
-            log.warn("Не удалось найти оптимальные параметры. Попробуйте расширить диапазоны поиска или проверить логику модели.");
+            log.warn("Не удалось найти оптимальные параметры. Проверьте логику или расширьте диапазоны.");
         }
     }
 }
