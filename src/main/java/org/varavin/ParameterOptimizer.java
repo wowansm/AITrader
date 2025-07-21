@@ -15,23 +15,6 @@ public class ParameterOptimizer {
 
     private static final Logger log = LoggerFactory.getLogger(ParameterOptimizer.class);
 
-    /*
-     * ВАЖНОЕ ПРИМЕЧАНИЕ:
-     * После введения в TradingBot логики с двумя режимами волатильности (High/Low),
-     * данный оптимизатор стал менее эффективным. Сейчас он оптимизирует только ОДИН
-     * набор параметров, который передается в конструктор TradingBot, но фактически
-     * НЕ ИСПОЛЬЗУЕТСЯ внутри симуляции, так как бот берет параметры из Config.java.
-     *
-     * Чтобы корректно оптимизировать систему, необходимо:
-     * 1. Решить, параметры какого режима мы оптимизируем (например, только для High Volatility).
-     * 2. Модифицировать TradingBot, чтобы он использовал ОДИН набор оптимизируемых параметров
-     * для выбранного режима, а для второго режима брал статические значения из Config.
-     * 3. В идеале — использовать более продвинутые методы оптимизации (например, с помощью opt4j),
-     * которые могут работать со всем набором из 8 параметров (по 4 для каждого режима) одновременно.
-     *
-     * Текущий код оставлен для демонстрации принципа, но требует доработки для полноценной
-     * оптимизации новой, двухрежимной стратегии.
-     */
     public static void main(String[] args) throws IOException {
         log.info("--- Подготовка данных для оптимизации ---");
         ProcessedData data = DataManager.prepareData();
@@ -48,8 +31,6 @@ public class ParameterOptimizer {
         MultiLayerNetwork bestModel = ModelSerializer.restoreMultiLayerNetwork(bestModelFile);
         log.info("Загружена модель для оптимизации: {}", bestModelFile.getName());
 
-        // Эти диапазоны будут использоваться для оптимизации "базовых" параметров
-        // в объекте BotParameters, хотя они и не влияют на симуляцию напрямую.
         double atrStopStart = 1.5, atrStopEnd = 5.0, atrStopStep = 0.5;
         double rrStart = 1.0, rrEnd = 3.0, rrStep = 0.25;
         double thresholdStart = 0.3, thresholdEnd = 1.5, thresholdStep = 0.2;
@@ -80,7 +61,6 @@ public class ParameterOptimizer {
                 for (double rr = rrStart; rr <= rrEnd; rr += rrStep) {
                     for (double threshold = thresholdStart; threshold <= thresholdEnd; threshold += thresholdStep) {
                         totalIterations++;
-                        // Создаем объект параметров, который сейчас является "пустышкой" для симуляции
                         BotParameters currentParams = new BotParameters(atrStop, rr, threshold, risk);
                         TradingBot bot = new TradingBot(currentParams, false);
 
@@ -90,7 +70,7 @@ public class ParameterOptimizer {
 
                         if (result.finalBalance() > bestBalance) {
                             bestBalance = result.finalBalance();
-                            bestParams = currentParams; // Сохраняем "демо" параметры
+                            bestParams = currentParams;
                             log.info(String.format("Найден новый лидер (на основе параметров из Config.java): Баланс: %.2f | Сделок: %d | ПФ: %.2f",
                                     bestBalance, result.totalTrades(), result.profitFactor()));
                         }

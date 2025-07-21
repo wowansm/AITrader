@@ -244,8 +244,6 @@ public class TradingBot {
     }
 
     private SignalType getSignal(INDArray prediction, double signalThreshold) {
-        // --- ИЗМЕНЕНИЕ: Исправлен вызов argMax для 1D вектора ---
-        // Убран второй аргумент (ось), так как prediction - это 1D вектор.
         int predictedClass = Nd4j.argMax(prediction).getInt(0);
         double probability = prediction.getDouble(predictedClass);
 

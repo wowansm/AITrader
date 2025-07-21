@@ -5,20 +5,14 @@ public class Config {
     // --- Параметры данных и кэширования ---
     public static final String CSV_FILE_NAME = "candles_gazprom_5m.csv";
     public static final String CACHE_DIR = "data_cache_trading";
-    // --- ИЗМЕНЕНИЕ: Новая версия данных для простого набора признаков ---
     public static final String DATA_VERSION = "v14_final_features";
-
-    // --- Выбор типа модели ---
-    public static final String MODEL_TYPE = "CLASSIFICATION";
 
     // --- Параметры признаков и временных рядов ---
     public static final int TIME_STEPS = 30;
-    // --- ИЗМЕНЕНИЕ: Уменьшаем количество признаков до 9 ---
     public static final int NUM_FEATURES = 18;
     public static final int NUM_OUTPUTS = 3;
     public static final int MAX_FUTURE_TICKS = 12;
     public static final int MAX_INDICATOR_PERIOD = 200;
-    // --- ИЗМЕНЕНИЕ: Параметры для создания меток классификации ---
     public static final double CLASSIFICATION_ATR_UP_THRESHOLD = 1.5;   // Движение вверх на 1.5 ATR для метки UP
     public static final double CLASSIFICATION_ATR_DOWN_THRESHOLD = 1.5; // Движение вниз на 1.5 ATR для метки DOWN
 
@@ -29,18 +23,14 @@ public class Config {
     public static final double INITIAL_LEARNING_RATE = 3e-4; // Умеренная начальная скорость
     public static final double L2_REGULARIZATION = 2e-4;
     public static final double DROPOUT_RATE = 0.4;
-    public static final int LSTM_LAYER_SIZE = 100;
-    public static final int DENSE_LAYER_SIZE = 100;
+    public static final int DENSE_LAYER_SIZE = 64;
     public static final int Convolution_LAYER_SIZE1 = 80;
     public static final int Convolution_LAYER_SIZE2 = 100;
     public static final int BATCH_SIZE = 64;
     public static final int EARLY_STOPPING_PATIENCE = 30;
     public static final int MAX_EPOCHS = 300;
-    public static final int CNN_N_FILTERS = 48;
-    public static final int CNN_KERNEL_SIZE = 5;
-    public static final double LR_DECAY_RATE = 0.98;
-    public static final double LR_SCHEDULE_DECAY_RATE = 0.5; // Снижать в 2 раза
-    public static final int LR_SCHEDULE_STEP = 15;           // Каждые 15 эпох
+    public static final double LR_SCHEDULE_DECAY_RATE = 1.0; // Снижать в 2 раза
+    public static final int LR_SCHEDULE_STEP = 20;           // Каждые 15 эпох
 
     // --- Параметры Торгового Робота (остаются без изменений на данном этапе) ---
     public static final double INITIAL_BALANCE = 50000.0;

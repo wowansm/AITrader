@@ -5,7 +5,6 @@ import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.datavec.api.writable.Writable;
 import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.INDArrayIndex;
 import org.nd4j.linalg.indexing.NDArrayIndex;
@@ -17,11 +16,11 @@ import org.ta4j.core.indicators.adx.ADXIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsLowerIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsMiddleIndicator;
 import org.ta4j.core.indicators.bollinger.BollingerBandsUpperIndicator;
-import org.ta4j.core.indicators.helpers.*;
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator;
+import org.ta4j.core.indicators.helpers.VolumeIndicator;
 import org.ta4j.core.indicators.statistics.StandardDeviationIndicator;
 import org.ta4j.core.num.DoubleNum;
 import org.ta4j.core.num.Num;
-import org.varavin.entity.BatchDataSetIterator;
 import org.varavin.entity.ProcessedData;
 
 import java.io.*;
@@ -36,7 +35,6 @@ public class DataManager {
 
     private static BarSeries originalSeries = null;
     private static int testDataStartIndex = -1;
-    // Кэшируем индикаторы
 
     public static BarSeries getOriginalSeries() {
         if (originalSeries == null) {
@@ -49,13 +47,8 @@ public class DataManager {
         return testDataStartIndex;
     }
 
-    /**
-     * ИЗМЕНЕНИЕ: Метод теперь возвращает объект ProcessedData,
-     * чтобы вызывающий код мог сам решать, как его использовать (для итераторов или для бэктеста).
-     */
     public static ProcessedData prepareData() {
         try {
-            // --- ИЗМЕНЕНИЕ: Сначала вычисляем testDataStartIndex, чтобы он был консистентным ---
             getOriginalSeries();
             int totalExamples = originalSeries.getBarCount() - Config.MAX_INDICATOR_PERIOD - Config.TIME_STEPS - Config.MAX_FUTURE_TICKS - 1;
             int trainEndOriginal = (int) (totalExamples * 0.7);
@@ -95,11 +88,7 @@ public class DataManager {
 
             INDArray[] oversampledTrainData = oversample(splitData[0], splitData[1]);
 
-            ProcessedData processedData = new ProcessedData(
-                    oversampledTrainData[0], oversampledTrainData[1],
-                    splitData[2], splitData[3],
-                    splitData[4], splitData[5]
-            );
+            ProcessedData processedData = new ProcessedData(oversampledTrainData[0], oversampledTrainData[1], splitData[2], splitData[3], splitData[4], splitData[5]);
             saveProcessedDataToCache(processedData);
             return processedData;
 
@@ -120,7 +109,7 @@ public class DataManager {
         List<INDArray> newFeatures = new ArrayList<>();
         List<INDArray> newLabels = new ArrayList<>();
 
-        for(int i=0; i<features.size(0); i++) {
+        for (int i = 0; i < features.size(0); i++) {
             newFeatures.add(features.get(NDArrayIndex.point(i), NDArrayIndex.all(), NDArrayIndex.all()));
             newLabels.add(labels.getRow(i));
         }
@@ -147,7 +136,7 @@ public class DataManager {
         INDArray finalLabels = Nd4j.vstack(newLabels.toArray(new INDArray[0]));
 
         List<Integer> indices = new ArrayList<>();
-        for(int i = 0; i < finalFeatures.size(0); i++) {
+        for (int i = 0; i < finalFeatures.size(0); i++) {
             indices.add(i);
         }
         Collections.shuffle(indices, new Random());
@@ -155,7 +144,7 @@ public class DataManager {
         INDArray shuffledFeatures = Nd4j.zeros(finalFeatures.shape());
         INDArray shuffledLabels = Nd4j.zeros(finalLabels.shape());
 
-        for(int i = 0; i < indices.size(); i++) {
+        for (int i = 0; i < indices.size(); i++) {
             int originalIndex = indices.get(i);
             INDArray featureSlice = finalFeatures.get(NDArrayIndex.point(originalIndex), NDArrayIndex.all(), NDArrayIndex.all());
             shuffledFeatures.put(new INDArrayIndex[]{NDArrayIndex.point(i), NDArrayIndex.all(), NDArrayIndex.all()}, featureSlice);
@@ -168,20 +157,26 @@ public class DataManager {
         return new INDArray[]{shuffledFeatures, shuffledLabels};
     }
 
-    // --- ИЗМЕНЕНИЕ: Метод теперь принимает готовые индексы ---
     private static INDArray[] splitDataset(INDArray features, INDArray labels, int trainEnd, int valEnd) {
         int total = (int) features.size(0);
-        return new INDArray[]{
-                features.get(NDArrayIndex.interval(0, trainEnd), NDArrayIndex.all(), NDArrayIndex.all()),
-                labels.get(NDArrayIndex.interval(0, trainEnd), NDArrayIndex.all()),
-                features.get(NDArrayIndex.interval(trainEnd, valEnd), NDArrayIndex.all(), NDArrayIndex.all()),
-                labels.get(NDArrayIndex.interval(trainEnd, valEnd), NDArrayIndex.all()),
-                features.get(NDArrayIndex.interval(valEnd, total), NDArrayIndex.all(), NDArrayIndex.all()),
-                labels.get(NDArrayIndex.interval(valEnd, total), NDArrayIndex.all())
-        };
+        return new INDArray[]{features.get(NDArrayIndex.interval(0, trainEnd), NDArrayIndex.all(), NDArrayIndex.all()), labels.get(NDArrayIndex.interval(0, trainEnd), NDArrayIndex.all()), features.get(NDArrayIndex.interval(trainEnd, valEnd), NDArrayIndex.all(), NDArrayIndex.all()), labels.get(NDArrayIndex.interval(trainEnd, valEnd), NDArrayIndex.all()), features.get(NDArrayIndex.interval(valEnd, total), NDArrayIndex.all(), NDArrayIndex.all()), labels.get(NDArrayIndex.interval(valEnd, total), NDArrayIndex.all())};
     }
 
-    private static INDArray createClassificationLabel(BarSeries series, Indicator<Num> atr, int currentIndex) { int futureEndIndex = currentIndex + Config.MAX_FUTURE_TICKS; if (futureEndIndex >= series.getBarCount()) return null; double currentPrice = series.getBar(currentIndex).getClosePrice().doubleValue(); double currentAtr = atr.getValue(currentIndex).doubleValue(); if (currentAtr < 1e-6) return null; double upTargetPrice = currentPrice + Config.CLASSIFICATION_ATR_UP_THRESHOLD * currentAtr; double downTargetPrice = currentPrice - Config.CLASSIFICATION_ATR_DOWN_THRESHOLD * currentAtr; for (int j = currentIndex + 1; j <= futureEndIndex; j++) { Bar futureBar = series.getBar(j); if (futureBar.getLowPrice().doubleValue() <= downTargetPrice) return Nd4j.create(new float[]{0, 1, 0}); if (futureBar.getHighPrice().doubleValue() >= upTargetPrice) return Nd4j.create(new float[]{1, 0, 0}); } return Nd4j.create(new float[]{0, 0, 1}); }
+    private static INDArray createClassificationLabel(BarSeries series, Indicator<Num> atr, int currentIndex) {
+        int futureEndIndex = currentIndex + Config.MAX_FUTURE_TICKS;
+        if (futureEndIndex >= series.getBarCount()) return null;
+        double currentPrice = series.getBar(currentIndex).getClosePrice().doubleValue();
+        double currentAtr = atr.getValue(currentIndex).doubleValue();
+        if (currentAtr < 1e-6) return null;
+        double upTargetPrice = currentPrice + Config.CLASSIFICATION_ATR_UP_THRESHOLD * currentAtr;
+        double downTargetPrice = currentPrice - Config.CLASSIFICATION_ATR_DOWN_THRESHOLD * currentAtr;
+        for (int j = currentIndex + 1; j <= futureEndIndex; j++) {
+            Bar futureBar = series.getBar(j);
+            if (futureBar.getLowPrice().doubleValue() <= downTargetPrice) return Nd4j.create(new float[]{0, 1, 0});
+            if (futureBar.getHighPrice().doubleValue() >= upTargetPrice) return Nd4j.create(new float[]{1, 0, 0});
+        }
+        return Nd4j.create(new float[]{0, 0, 1});
+    }
 
     private static INDArray createFeatureWindowAsINDArray(BarSeries series, Map<String, Indicator<Num>> indicators, int currentIndex) {
         try {
@@ -205,8 +200,8 @@ public class DataManager {
                 window.putScalar(featureIdx++, j, getIndicatorValueSafe(indicators.get("ATR14"), idx));
 
                 ZonedDateTime endTime = bar.getEndTime();
-                window.putScalar(featureIdx++, j, (double) endTime.getDayOfWeek().getValue());
-                window.putScalar(featureIdx++, j, (double) endTime.getHour());
+                window.putScalar(featureIdx++, j, endTime.getDayOfWeek().getValue());
+                window.putScalar(featureIdx++, j, endTime.getHour());
 
                 double macd = getIndicatorValueSafe(indicators.get("MACD"), idx);
                 double macdSignal = getIndicatorValueSafe(indicators.get("MACD_Signal"), idx);
@@ -293,37 +288,6 @@ public class DataManager {
         }
     }
 
-    private static INDArray[] splitDataset(INDArray features, INDArray labels, double trainRatio, double valRatio) {
-        int total = (int) features.size(0);
-        int trainEnd = (int) (total * trainRatio);
-        int valEnd = trainEnd + (int) (total * valRatio);
-        // Устанавливаем статический индекс начала тестовых данных
-        testDataStartIndex = valEnd + Config.MAX_INDICATOR_PERIOD + Config.TIME_STEPS;
-        log.info("Индекс начала тестовых данных установлен: {}", testDataStartIndex);
-
-        return new INDArray[]{
-                features.get(NDArrayIndex.interval(0, trainEnd), NDArrayIndex.all(), NDArrayIndex.all()),
-                labels.get(NDArrayIndex.interval(0, trainEnd), NDArrayIndex.all()),
-                features.get(NDArrayIndex.interval(trainEnd, valEnd), NDArrayIndex.all(), NDArrayIndex.all()),
-                labels.get(NDArrayIndex.interval(trainEnd, valEnd), NDArrayIndex.all()),
-                features.get(NDArrayIndex.interval(valEnd, total), NDArrayIndex.all(), NDArrayIndex.all()),
-                labels.get(NDArrayIndex.interval(valEnd, total), NDArrayIndex.all())
-        };
-    }
-
-    private static INDArray normalizeFeatureSetZScore(INDArray features, INDArray featureStats) {
-        INDArray normalized = features.dup();
-        for (int f = 0; f < Config.NUM_FEATURES; f++) {
-            double mean = featureStats.getDouble(f, 0);
-            double stdDev = featureStats.getDouble(f, 1);
-            if (stdDev > 1e-8) {
-                INDArray featureSlice = normalized.get(NDArrayIndex.all(), NDArrayIndex.point(f), NDArrayIndex.all());
-                featureSlice.subi(mean).divi(stdDev);
-            }
-        }
-        return normalized;
-    }
-
     private static double getIndicatorValueSafe(Indicator<Num> indicator, int index) {
         try {
             if (index >= 0 && index < indicator.getBarSeries().getBarCount()) {
@@ -346,12 +310,7 @@ public class DataManager {
             List<Writable> record = reader.next();
             try {
                 ZonedDateTime time = Instant.ofEpochSecond(Long.parseLong(record.get(0).toString())).atZone(ZoneId.systemDefault());
-                Bar bar = new BaseBar(Duration.ofMinutes(5), time,
-                        Double.parseDouble(record.get(1).toString()),
-                        Double.parseDouble(record.get(2).toString()),
-                        Double.parseDouble(record.get(3).toString()),
-                        Double.parseDouble(record.get(4).toString()),
-                        Double.parseDouble(record.get(5).toString()));
+                Bar bar = new BaseBar(Duration.ofMinutes(5), time, Double.parseDouble(record.get(1).toString()), Double.parseDouble(record.get(2).toString()), Double.parseDouble(record.get(3).toString()), Double.parseDouble(record.get(4).toString()), Double.parseDouble(record.get(5).toString()));
                 bars.add(bar);
             } catch (Exception e) {
                 log.warn("Пропуск некорректной записи: {}", e.getMessage());
@@ -392,14 +351,7 @@ public class DataManager {
             File trainFeaturesFile = new File(cacheDir, prefix + "trainFeatures.bin");
             if (!trainFeaturesFile.exists()) return null;
 
-            return new ProcessedData(
-                    loadINDArray(trainFeaturesFile),
-                    loadINDArray(new File(cacheDir, prefix + "trainLabels.bin")),
-                    loadINDArray(new File(cacheDir, prefix + "valFeatures.bin")),
-                    loadINDArray(new File(cacheDir, prefix + "valLabels.bin")),
-                    loadINDArray(new File(cacheDir, prefix + "testFeatures.bin")),
-                    loadINDArray(new File(cacheDir, prefix + "testLabels.bin"))
-            );
+            return new ProcessedData(loadINDArray(trainFeaturesFile), loadINDArray(new File(cacheDir, prefix + "trainLabels.bin")), loadINDArray(new File(cacheDir, prefix + "valFeatures.bin")), loadINDArray(new File(cacheDir, prefix + "valLabels.bin")), loadINDArray(new File(cacheDir, prefix + "testFeatures.bin")), loadINDArray(new File(cacheDir, prefix + "testLabels.bin")));
         } catch (Exception e) {
             log.warn("Не удалось загрузить кэшированные данные: {}", e.getMessage());
             return null;

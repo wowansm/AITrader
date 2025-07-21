@@ -50,11 +50,6 @@ public class BatchDataSetIterator implements DataSetIterator {
         );
 
         cursor += actualBatchSize;
-
-        // --- ИЗМЕНЕНИЕ: Для CNN1D данные должны быть в формате [batch, features, timesteps] ---
-        // Наш DataManager уже создает данные в формате [NUM_FEATURES, TIME_STEPS] для каждого примера,
-        // поэтому при батчинге мы получаем [batch, NUM_FEATURES, TIME_STEPS], что является правильным форматом.
-        // Никаких дополнительных перестановок (permute) не требуется.
         return new DataSet(batchFeatures, batchLabels);
     }
 
