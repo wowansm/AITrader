@@ -1,0 +1,269 @@
+6:02:58: Executing ':org.varavin.NeuralNetwork.main()'…
+
+> Task :compileJava
+> Task :processResources UP-TO-DATE
+> Task :classes
+Connected to the target VM, address: 'localhost:54820', transport: 'socket'
+
+> Task :org.varavin.NeuralNetwork.main()
+06:03:03.542 [main] INFO  org.nd4j.linalg.factory.Nd4jBackend - Loaded [JCublasBackend] backend
+06:03:06.311 [main] INFO  org.nd4j.nativeblas.NativeOpsHolder - Number of threads used for linear algebra: 32
+06:03:06.406 [main] INFO  o.n.l.a.o.e.DefaultOpExecutioner - Backend used: [CUDA]; OS: [Windows 10]
+06:03:06.406 [main] INFO  o.n.l.a.o.e.DefaultOpExecutioner - Cores: [36]; Memory: [8.0GB];
+06:03:06.406 [main] INFO  o.n.l.a.o.e.DefaultOpExecutioner - Blas vendor: [CUBLAS]
+06:03:06.419 [main] INFO  o.nd4j.linalg.jcublas.JCublasBackend - ND4J CUDA build version: 11.6.55
+06:03:06.420 [main] INFO  o.nd4j.linalg.jcublas.JCublasBackend - CUDA device 0: [NVIDIA GeForce RTX 4070 SUPER]; cc: [8.9]; Total memory: [12877955072]
+06:03:06.421 [main] INFO  o.nd4j.linalg.jcublas.JCublasBackend - Backend build information:
+ MSVC: 192930146
+STD version: 201402L
+DEFAULT_ENGINE: samediff::ENGINE_CUDA
+HAVE_FLATBUFFERS
+06:03:06.421 [main] INFO  org.varavin.NeuralNetwork - ND4J Data Type: FLOAT
+06:03:09.370 [main] INFO  org.varavin.DataManager - Используются кэшированные данные версии v9_simple_features
+06:03:09.624 [main] INFO  org.varavin.DataManager - Восстановлен testDataStartIndex из кэша: 8500
+06:03:09.624 [main] INFO  org.varavin.DataManager - Создание итераторов для данных:
+06:03:09.624 [main] INFO  org.varavin.DataManager - Train: 6933 примеров
+06:03:09.624 [main] INFO  org.varavin.DataManager - Val: 1485 примеров
+06:03:09.624 [main] INFO  org.varavin.DataManager - Test: 1487 примеров
+06:03:09.627 [main] INFO  org.varavin.NeuralNetwork - Создание новой модели типа: REGRESSION
+06:03:09.810 [main] INFO  o.d.nn.multilayer.MultiLayerNetwork - Starting MultiLayerNetwork with WorkspaceModes set to [training: ENABLED; inference: ENABLED], cacheMode set to [NONE]
+06:03:09.882 [main] INFO  org.varavin.NeuralNetwork - Создана новая модель с 44018 параметрами
+06:03:09.917 [main] INFO  org.varavin.NeuralNetwork - 
+=======================================================================================
+LayerName (LayerType)         nIn,nOut   TotalParams   ParamsShape                     
+=======================================================================================
+layer0 (Convolution1DLayer)   9,80       3,680         b:{80}, W:{80,9,5,1}            
+layer1 (LSTM)                 80,64      37,120        W:{80,256}, RW:{64,256}, b:{256}
+layer2 (GlobalPoolingLayer)   -,-        0             -                               
+layer3 (DenseLayer)           64,48      3,120         W:{64,48}, b:{48}               
+layer4 (DropoutLayer)         -,-        0             -                               
+layer5 (OutputLayer)          48,2       98            W:{48,2}, b:{2}                 
+---------------------------------------------------------------------------------------
+            Total Parameters:  44,018
+        Trainable Parameters:  44,018
+           Frozen Parameters:  0
+=======================================================================================
+
+06:03:10.799 [vert.x-eventloop-thread-0] INFO  org.deeplearning4j.ui.VertxUIServer - Deeplearning4j UI server started at: http://localhost:9000
+06:03:10.805 [main] INFO  org.deeplearning4j.ui.VertxUIServer - StatsStorage instance attached to UI: InMemoryStatsStorage(uid=edf437d8)
+06:03:10.828 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Starting early stopping training
+06:03:11.887 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 0 is 2.6184440355596115
+06:03:41.740 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 100 is 1.5155187016820113
+06:03:44.008 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 0
+06:03:47.465 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 0: 2.137183644905512
+06:04:14.275 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 200 is 3.02947452266974
+06:04:19.138 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 1
+06:04:22.549 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.1267207253916065, epoch = 1 (previous: score = 2.137183644905512, epoch = 0)
+06:04:22.588 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:04:46.763 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 300 is 1.494089780807539
+06:04:54.197 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 2
+06:04:57.619 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.1217346209572634, epoch = 2 (previous: score = 2.1267207253916065, epoch = 1)
+06:04:57.654 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:05:19.473 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 400 is 6.307647776583305
+06:05:29.731 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 3
+06:05:33.132 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.116418053273758, epoch = 3 (previous: score = 2.1217346209572634, epoch = 2)
+06:05:33.168 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:05:52.447 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 500 is 1.6736021231330787
+06:06:05.346 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 4
+06:06:08.666 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.1128011858261173, epoch = 4 (previous: score = 2.116418053273758, epoch = 3)
+06:06:08.701 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:06:25.029 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 600 is 1.8753749114795237
+06:06:40.316 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 5
+06:06:43.632 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.1063047613971704, epoch = 5 (previous: score = 2.1128011858261173, epoch = 4)
+06:06:43.668 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:06:57.302 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 700 is 1.3084886018762194
+06:07:15.309 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 6
+06:07:18.663 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.102791972010434, epoch = 6 (previous: score = 2.1063047613971704, epoch = 5)
+06:07:18.698 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:07:29.763 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 800 is 2.8536876722860667
+06:07:50.365 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 7
+06:07:53.704 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.094760676743328, epoch = 7 (previous: score = 2.102791972010434, epoch = 6)
+06:07:53.739 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:08:02.175 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 900 is 1.415570633271121
+06:08:25.320 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 8
+06:08:28.701 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 8: 2.0950478599542586
+06:08:34.614 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 1000 is 3.6725108058452713
+06:09:00.464 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 9
+06:09:03.881 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.0932553050053073, epoch = 9 (previous: score = 2.094760676743328, epoch = 7)
+06:09:03.921 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:09:07.213 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 1100 is 2.0412109895691963
+06:09:35.560 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 10
+06:09:38.976 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.0868906161988603, epoch = 10 (previous: score = 2.0932553050053073, epoch = 9)
+06:09:39.011 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:09:39.701 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 1200 is 3.4799369381382688
+06:10:08.808 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 1300 is 2.8703968700648756
+06:10:10.784 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 11
+06:10:14.211 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.0815552723831368, epoch = 11 (previous: score = 2.0868906161988603, epoch = 10)
+06:10:14.245 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:10:41.183 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 1400 is 1.3755349410666502
+06:10:45.775 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 12
+06:10:49.183 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 12: 2.0854487910043846
+06:11:13.585 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 1500 is 3.3103403526182826
+06:11:20.821 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 13
+06:11:24.250 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.079284558112157, epoch = 13 (previous: score = 2.0815552723831368, epoch = 11)
+06:11:24.288 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:11:46.122 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 1600 is 1.4625407010258389
+06:11:55.950 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 14
+06:11:59.339 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 14: 2.0882560507534134
+06:12:18.565 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 1700 is 2.8910524744109343
+06:12:31.144 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 15
+06:12:34.560 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.0705493130154906, epoch = 15 (previous: score = 2.079284558112157, epoch = 13)
+06:12:34.600 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:12:51.143 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 1800 is 2.0525822668227534
+06:13:06.299 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 16
+06:13:09.610 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.070090828766033, epoch = 16 (previous: score = 2.0705493130154906, epoch = 15)
+06:13:09.647 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:13:23.639 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 1900 is 4.149422839526719
+06:13:41.456 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 17
+06:13:44.779 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 17: 2.079582433350592
+06:13:56.061 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 2000 is 1.553965255305446
+06:14:16.300 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 18
+06:14:19.633 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.064595223827031, epoch = 18 (previous: score = 2.070090828766033, epoch = 16)
+06:14:19.668 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:14:28.454 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 2100 is 2.3667567791038606
+06:14:51.345 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 19
+06:14:54.794 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 19: 2.0730064477642234
+06:15:00.899 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 2200 is 1.6941757954945824
+06:15:26.444 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 20
+06:15:29.871 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 20: 2.0753355756778187
+06:15:33.450 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 2300 is 3.5443689389888418
+06:16:01.274 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 21
+06:16:04.701 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 21: 2.0725938030378797
+06:16:05.648 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 2400 is 1.4457052399058135
+06:16:34.536 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 2500 is 1.5025370216359484
+06:16:36.248 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 22
+06:16:39.687 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 22: 2.0699907235364896
+06:17:06.926 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 2600 is 2.828425693638721
+06:17:11.265 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 23
+06:17:14.639 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 23: 2.0708323577100702
+06:17:39.241 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 2700 is 2.042594622956789
+06:17:46.139 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 24
+06:17:49.473 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 24: 2.0751818917788563
+06:18:11.469 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 2800 is 3.7944836003248157
+06:18:20.985 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 25
+06:18:24.339 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 25: 2.0928671436853628
+06:18:43.661 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 2900 is 1.671309420613755
+06:18:55.604 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 26
+06:18:58.879 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 26: 2.066839345118249
+06:19:15.725 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 3000 is 2.849488758915084
+06:19:30.546 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 27
+06:19:33.860 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 27: 2.068608882585209
+06:19:48.021 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 3100 is 1.582474332317352
+06:20:05.277 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 28
+06:20:08.590 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - New best model: score = 2.0638102354095307, epoch = 28 (previous: score = 2.064595223827031, epoch = 18)
+06:20:08.624 [main] INFO  o.d.e.t.ScoreImprovementEpochTerminationCondition - Epoch with score greater than threshold * * *
+06:20:20.187 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 3200 is 2.5821402821126265
+06:20:40.004 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 29
+06:20:43.437 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 29: 2.067183206380106
+06:20:52.463 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 3300 is 1.8028853027516745
+06:21:14.838 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 30
+06:21:18.262 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 30: 2.0651032266943106
+06:21:24.695 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 3400 is 2.6280321440535843
+06:21:49.646 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 31
+06:21:53.056 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 31: 2.064815691267509
+06:21:56.914 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 3500 is 1.2901358182781
+06:22:24.661 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 32
+06:22:28.080 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 32: 2.0647756140545455
+06:22:29.322 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 3600 is 2.814825982166441
+06:22:58.293 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 3700 is 3.113930241872792
+06:22:59.714 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 33
+06:23:03.086 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 33: 2.0644453451511477
+06:23:30.770 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 3800 is 1.6985493306010115
+06:23:34.799 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 34
+06:23:38.137 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 34: 2.067949622010847
+06:24:03.136 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 3900 is 3.6850823951763347
+06:24:09.801 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 35
+06:24:13.178 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 35: 2.071922686833169
+06:24:35.489 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 4000 is 1.1433213613544697
+06:24:44.733 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 36
+06:24:48.098 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 36: 2.0747615733843756
+06:25:07.914 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 4100 is 1.7553777024074244
+06:25:19.801 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 37
+06:25:23.087 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 37: 2.0726124583145493
+06:25:40.312 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 4200 is 1.3877106420504823
+06:25:54.738 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 38
+06:25:58.122 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 38: 2.0808936206547566
+06:26:12.683 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 4300 is 2.3951706603484397
+06:26:29.591 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 39
+06:26:33.022 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 39: 2.094202410294038
+06:26:44.939 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 4400 is 1.5695592350947822
+06:27:04.702 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 40
+06:27:08.144 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 40: 2.076108875752433
+06:27:17.484 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 4500 is 2.4155345871655
+06:27:39.670 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 41
+06:27:43.090 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 41: 2.0851680874075282
+06:27:49.864 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 4600 is 1.449638604760944
+06:28:14.669 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 42
+06:28:18.043 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 42: 2.087524375774322
+06:28:22.176 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 4700 is 1.7022187504278459
+06:28:49.242 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 43
+06:28:52.597 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 43: 2.0788944451863687
+06:28:54.104 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 4800 is 1.5797975710944197
+06:29:22.843 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 4900 is 1.5788521753782983
+06:29:23.980 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 44
+06:29:27.309 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 44: 2.0815621332949688
+06:29:55.013 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 5000 is 3.0926242132248634
+06:29:58.768 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 45
+06:30:02.113 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 45: 2.0988606944158734
+06:30:27.121 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 5100 is 1.4622227588080587
+06:30:33.415 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 46
+06:30:36.755 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 46: 2.092083683703426
+06:30:59.050 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 5200 is 2.1096696231801557
+06:31:08.059 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 47
+06:31:11.385 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 47: 2.089977179438185
+06:31:31.412 [main] INFO  o.d.o.l.ScoreIterationListener - Score at iteration 5300 is 1.8972166717534908
+06:31:42.877 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Completed training epoch 48
+06:31:46.233 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Score at epoch 48: 2.094683620910088
+06:31:46.233 [main] INFO  o.d.e.t.BaseEarlyStoppingTrainer - Hit epoch termination condition at epoch 48. Details: ScoreImprovementEpochTerminationCondition(maxEpochsWithNoImprovement=20, minImprovement=1.0E-5)
+06:31:46.418 [main] INFO  org.varavin.NeuralNetwork - Обучение завершено.
+06:31:46.419 [main] INFO  org.varavin.NeuralNetwork - Причина остановки: EpochTerminationCondition
+06:31:46.419 [main] INFO  org.varavin.NeuralNetwork - Лучшая эпоха: 28
+06:31:46.481 [main] INFO  org.varavin.NeuralNetwork - Загружена лучшая модель: bestModel.bin
+06:31:46.482 [main] INFO  org.varavin.NeuralNetwork - --- Оценка качества регрессии на тестовых данных ---
+06:31:48.365 [main] INFO  org.varavin.NeuralNetwork - Статистика по выходам (Column 0 = Pred_Up_ATR, Column 1 = Pred_Down_ATR):
+06:31:48.384 [main] INFO  org.varavin.NeuralNetwork - Column    MSE            MAE            RMSE           RSE            PC             R^2            
+col_0     1.09923e+01    2.24670e+00    3.31546e+00    1.13603e+00    2.28405e-02    -1.36027e-01   
+col_1     9.61074e+00    2.04396e+00    3.10012e+00    1.23399e+00    8.81677e-02    -2.33990e-01   
+
+11:08:13.227 [main] INFO  org.varavin.NeuralNetwork - 
+--- Запуск бэктеста на тестовых данных ---
+11:08:13.451 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #1, Step 295): 350 @ 140.67 | TP: 142.03 | SL: 139.77
+11:08:13.451 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #1, Stop-Loss): 350 @ 139.77 | Net Profit: -336.29 | Balance: 49644.02
+Disconnected from the target VM, address: 'localhost:57283', transport: 'socket'
+11:08:13.461 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #2, Step 602): 360 @ 135.79 | TP: 137.67 | SL: 134.54
+11:08:13.461 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #2, Take-Profit): 360 @ 137.67 | Net Profit: 655.55 | Balance: 50280.02
+11:08:13.461 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #3, Step 622): 360 @ 137.03 | TP: 138.59 | SL: 135.99
+11:08:13.462 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #3, Stop-Loss): 360 @ 135.99 | Net Profit: -394.09 | Balance: 49866.19
+11:08:13.466 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #4, Step 865): 360 @ 136.83 | TP: 138.11 | SL: 135.98
+11:08:13.467 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #4, Stop-Loss): 360 @ 135.98 | Net Profit: -326.39 | Balance: 49520.10
+11:08:13.467 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #5, Step 880): 360 @ 135.98 | TP: 136.98 | SL: 135.32
+11:08:13.467 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #5, Take-Profit): 360 @ 136.98 | Net Profit: 338.87 | Balance: 49839.38
+11:08:13.468 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #6, Step 908): 360 @ 136.80 | TP: 137.98 | SL: 136.01
+11:08:13.468 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #6, Take-Profit): 360 @ 137.98 | Net Profit: 405.62 | Balance: 50225.31
+11:08:13.469 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #7, Step 964): 360 @ 137.69 | TP: 138.44 | SL: 137.19
+11:08:13.469 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #7, Stop-Loss): 360 @ 137.19 | Net Profit: -200.50 | Balance: 50004.98
+11:08:13.469 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #8, Step 989): 360 @ 137.26 | TP: 138.13 | SL: 136.68
+11:08:13.469 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #8, Take-Profit): 360 @ 138.13 | Net Profit: 292.17 | Balance: 50277.39
+11:08:13.470 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #9, Step 1039): 360 @ 137.60 | TP: 138.70 | SL: 136.86
+11:08:13.470 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #9, Take-Profit): 360 @ 138.70 | Net Profit: 377.65 | Balance: 50635.22
+11:08:13.472 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #10, Step 1149): 360 @ 137.84 | TP: 138.90 | SL: 137.13
+11:08:13.472 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #10, Stop-Loss): 360 @ 137.13 | Net Profit: -273.71 | Balance: 50341.66
+11:08:13.472 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #11, Step 1172): 360 @ 137.95 | TP: 138.96 | SL: 137.27
+11:08:13.473 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #11, Take-Profit): 360 @ 138.96 | Net Profit: 345.16 | Balance: 50666.95
+11:08:13.473 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #12, Step 1197): 360 @ 139.03 | TP: 140.29 | SL: 138.19
+11:08:13.473 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #12, Take-Profit): 360 @ 140.29 | Net Profit: 433.88 | Balance: 51080.81
+11:08:13.474 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #13, Step 1430): 360 @ 140.32 | TP: 141.15 | SL: 139.77
+11:08:13.474 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #13, Take-Profit): 360 @ 141.15 | Net Profit: 277.64 | Balance: 51338.24
+11:08:13.475 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #14, Step 1457): 360 @ 140.64 | TP: 141.76 | SL: 139.89
+11:08:13.475 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #14, Take-Profit): 360 @ 141.76 | Net Profit: 384.11 | Balance: 51702.10
+11:08:13.475 [main] INFO  org.varavin.TradingBot - OPEN LONG (Pos #15, Step 1460): 360 @ 141.85 | TP: 143.50 | SL: 140.75
+11:08:13.475 [main] INFO  org.varavin.TradingBot - CLOSE LONG (Pos #15, Конец симуляции): 360 @ 142.51 | Net Profit: 217.08 | Balance: 51898.75
+11:08:13.475 [main] INFO  org.varavin.TradingBot - 
+--- Результаты симуляции ---
+11:08:13.476 [main] INFO  org.varavin.TradingBot - Начальный баланс:   50000.00
+11:08:13.476 [main] INFO  org.varavin.TradingBot - Конечный баланс:    51898.75
+11:08:13.476 [main] INFO  org.varavin.TradingBot - Прибыль/убыток:     1898.75 (3.80%)
+11:08:13.476 [main] INFO  org.varavin.TradingBot - Всего сделок:       15
+11:08:13.476 [main] INFO  org.varavin.TradingBot - Прибыльных сделок:  10 (66.67%)
+11:08:13.476 [main] INFO  org.varavin.TradingBot - Профит-фактор:      2.43
+11:08:13.476 [main] INFO  org.varavin.TradingBot - ----------------------------

@@ -2,15 +2,19 @@ package org.varavin.entity;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 
-/**
- * ИСПРАВЛЕНИЕ: Класс преобразован в record.
- * Это автоматически создает канонический конструктор и публичные
- * методы доступа (например, testFeatures(), testLabels() и т.д.),
- * что соответствует ожиданиям вызывающего кода в ParameterOptimizer.
- */
-public record ProcessedData(
-        INDArray trainFeatures, INDArray trainLabels,
-        INDArray valFeatures, INDArray valLabels,
-        INDArray testFeatures, INDArray testLabels
-) {
+public class ProcessedData {
+    public final INDArray trainFeatures, trainLabels;
+    public final INDArray valFeatures, valLabels;
+    public final INDArray testFeatures, testLabels;
+
+    public ProcessedData(INDArray trainFeatures, INDArray trainLabels,
+                         INDArray valFeatures, INDArray valLabels,
+                         INDArray testFeatures, INDArray testLabels) {
+        this.trainFeatures = trainFeatures;
+        this.trainLabels = trainLabels;
+        this.valFeatures = valFeatures;
+        this.valLabels = valLabels;
+        this.testFeatures = testFeatures;
+        this.testLabels = testLabels;
+    }
 }
